@@ -46,19 +46,17 @@ class Day4 {
         cards.forEach { (cardNumber) -> cache[cardNumber] = 1 }
 
         cards.map { (cardNumber, winnerNumbers, myNumbers) ->
-            println(cardNumber)
-
             val numCopies = cache.getOrDefault(cardNumber, 1)
-            (0..<numCopies).forEach {
-                // If cachedWin is 4, you win a copy of the next four cards.
-                val cachedWin = winsCache.getOrPut(Triple(cardNumber, winnerNumbers, myNumbers)) {
+            repeat(numCopies) {
+                winsCache.getOrPut(Triple(cardNumber, winnerNumbers, myNumbers)) {
                     myNumbers.intersect(winnerNumbers.toSet()).size
-                }
-                (cardNumber + 1..cardNumber + cachedWin).forEach {
-                    try {
-                        cache[it] = cache[it]!! + 1
-                    } catch (ex: Exception) {
-                        println(ex.message)
+                }.let { cachedWin ->
+                    (cardNumber + 1..cardNumber + cachedWin).forEach {
+                        try {
+                            cache[it] = cache[it]!! + 1
+                        } catch (ex: Exception) {
+                            println(ex.message)
+                        }
                     }
                 }
             }
